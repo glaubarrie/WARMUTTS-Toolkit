@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WarMutts' Calculator — Mortar Range Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #1b1d18;
+    --panel: #23261f;
+    --line: #34382c;
+    --text: #e9e5d6;
+    --text-dim: #9c9884;
+    --accent: #ffff52;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { color-scheme: dark; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--text);
+    padding: 32px 20px;
+    line-height: 1.5;
+  }
+
+  .card {
+    width: min(460px, 100%);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    padding: 40px 36px;
+  }
+
+  h1 {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 26px;
+    letter-spacing: 0.01em;
+    margin: 0;
+    color: var(--text);
+  }
+
+  .subline {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 6px;
+    margin-bottom: 34px;
+  }
+
+  fieldset {
+    border: none;
+    padding: 0;
+    margin: 0 0 22px;
+  }
+
+  .field-example {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 18px;
+    padding: 14px 14px;
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+
+  input[type="text"]:focus {
+    border-color: var(--accent);
+  }
+
+  input[type="text"]::placeholder {
+    color: #55584a;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--line);
+    margin: 30px 0 26px;
+    border: none;
+  }
+
+  .hero-result {
+    text-align: center;
+    margin-bottom: 6px;
+  }
+
+  .hero-label {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+
+  .hero-value {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 48px;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .bearing-result {
+    text-align: center;
+    margin-top: 22px;
+  }
+
+  .bearing-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+
+  .bearing-value {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 500;
+    font-size: 20px;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>WARMUTTS' Calculator</h1>
+    <div class="subline">Paste two coordinates to get range and bearing.</div>
+
+    <fieldset>
+      <div class="field-example">Example: x69.02, y67.31</div>
+      <label for="mortarCoord">Mortar position</label>
+      <input type="text" id="mortarCoord" placeholder="x0.00, y0.00">
+    </fieldset>
+
+    <fieldset>
+      <div class="field-example">Example: x42.08, y48.29</div>
+      <label for="targetCoord">Target position</label>
+      <input type="text" id="targetCoord" placeholder="x0.00, y0.00">
+    </fieldset>
+
+    <hr class="divider">
+
+    <div class="hero-result">
+      <div class="hero-label">Distance</div>
+      <div class="hero-value" id="distance">—</div>
+    </div>
+
+    <div class="bearing-result">
+      <div class="bearing-label">Bearing from north</div>
+      <div class="bearing-value" id="bearing">—</div>
+    </div>
+  </div>
+
+<script>
+  const mortarCoord = document.getElementById('mortarCoord');
+  const targetCoord = document.getElementById('targetCoord');
+  const distanceEl = document.getElementById('distance');
+  const bearingEl = document.getElementById('bearing');
+
+  // Parses strings like "x83.70, y30.81" (case-insensitive, flexible spacing/order)
+  function parseCoord(str) {
+    if (!str) return null;
+    const xMatch = str.match(/x\s*(-?\d+(?:\.\d+)?)/i);
+    const yMatch = str.match(/y\s*(-?\d+(?:\.\d+)?)/i);
+    if (!xMatch || !yMatch) return null;
+    return { x: parseFloat(xMatch[1]), y: parseFloat(yMatch[1]) };
+  }
+
+  function calc() {
+    const p1 = parseCoord(mortarCoord.value);
+    const p2 = parseCoord(targetCoord.value);
+
+    if (!p1 || !p2) {
+      distanceEl.textContent = '—';
+      bearingEl.textContent = '—';
+      return;
+    }
+
+    const dx = p2.x - p1.x;
+    const dy = p2.y - p1.y;
+    const distance = Math.sqrt(dx * dx + dy * dy) * 100; // coord units = hundreds of metres
+
+    // Bearing measured clockwise from North (0-360°)
+    let bearing = Math.atan2(dx, dy) * (180 / Math.PI);
+    if (bearing < 0) bearing += 360;
+
+    distanceEl.textContent = distance.toFixed(0) + ' m';
+    bearingEl.textContent = bearing.toFixed(1) + '°';
+  }
+
+  [mortarCoord, targetCoord].forEach(el => el.addEventListener('input', calc));
+</script>
+</body>
+</html>

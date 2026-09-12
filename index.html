@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WARMUTTS' Toolkit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #1b1d18;
+    --panel: #23261f;
+    --line: #34382c;
+    --text: #e9e5d6;
+    --text-dim: #9c9884;
+    --accent: #ffff52;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { color-scheme: dark; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--text);
+    line-height: 1.5;
+    display: flex;
+    justify-content: center;
+    padding: 60px 20px;
+  }
+
+  .wrap {
+    width: min(560px, 100%);
+  }
+
+  h1 {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 700;
+    font-size: 40px;
+    letter-spacing: 0.01em;
+    margin: 0;
+    color: var(--text);
+  }
+
+  .subline {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-top: 8px;
+    margin-bottom: 44px;
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .tool {
+    display: block;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    padding: 22px 24px;
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color 0.15s ease;
+  }
+
+  .tool:hover {
+    border-color: var(--accent);
+  }
+
+  .tool-name {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 19px;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .tool:hover .tool-name {
+    color: var(--accent);
+  }
+
+  .tool-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .empty-note {
+    font-size: 13px;
+    color: var(--text-dim);
+    padding: 22px 24px;
+    border: 1px dashed var(--line);
+  }
+
+  footer {
+    margin-top: 50px;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>WARMUTTS' Toolkit</h1>
+    <div class="subline">Tools for WarDogs, built by the pack.</div>
+
+    <div class="list">
+      <a class="tool" href="warmutts-calc.html">
+        <div class="tool-name">WarMutts' Calculator</div>
+        <div class="tool-desc">Paste two coordinates, get mortar range and bearing.</div>
+      </a>
+
+      <!-- Add new tools by copying a .tool link block above -->
+    </div>
+
+    <footer>More tools added as they're built.</footer>
+  </div>
+</body>
+</html>
